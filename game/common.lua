@@ -37,6 +37,7 @@ function common:createBird()
   return bird
 end
 
+
 --walls creating
 
 function common:createWall( bTop, bBottom, wallWidth )
@@ -79,6 +80,7 @@ function common:createWallGroup( bTop, bBottom, wallWidth )
   
   return group  
 end
+
 
 --Counter creating
 
@@ -150,12 +152,21 @@ function common:addGameScreenCounter(sceneView)
   sceneView:insert(counterSprites)
 end
 
+
 --background creating
 
-function common:addBackgroundElements(sceneView)
-  local background = display.newImageRect(textures.gameTexture, 1, display.contentWidth, display.contentHeight)
+function common:createBackground( textureSet, num )
+  local background = display.newImageRect(textures[textureSet], num, display.contentWidth, display.contentHeight)
+  
   background.anchorX = 0
   background.anchorY = 0
+  
+  return background
+end
+
+function common:addBackgroundElements(sceneView)
+  local background = self:createBackground( "gameTexture", 1 )
+
   sceneView:insert(background)
   background:toBack()
   
@@ -176,6 +187,7 @@ function common:addBackgroundElements(sceneView)
   sceneView.fakeTop = fakeTop
   sceneView:insert(fakeTop)
 end
+
 
 --[[ BOUNCING TRANSITION ]]--
 
@@ -231,6 +243,7 @@ function common:resumeUpDownTransition( obj )
     transition.resume( obj.up )
   end
 end
+
 
 --[[ COMMON BUTTON EFFECTS ]]--
 

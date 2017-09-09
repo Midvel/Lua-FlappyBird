@@ -50,7 +50,6 @@ local function inPauseButtonCoords( pauseButton, x, y )
   local w = pauseButton.width
   local h = pauseButton.height
   return x >= px and x <= px + w and y >= py and y <= py + h 
-
 end
 
 local function wallsTransition(walls)
@@ -98,10 +97,10 @@ end
 local function onTapPauseButton(event)
   if not event.target.taped then
     event.target.taped = true
-    scene:pauseGame()
     composer.showOverlay( "game.pauseScreen", { isModal = true } )
   end
 end
+
 
 -- SCENE ELEMENTS CREATING
 
@@ -191,6 +190,7 @@ local function addGameScreenTextElements(sceneView)
   sceneView:insert(help)
   sceneView:insert(text)
 end
+
 
 -- PAUSE / RESUME GAME
 

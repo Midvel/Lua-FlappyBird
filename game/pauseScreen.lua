@@ -20,6 +20,7 @@ local function onTapMenuButton(event)
   end
 end
 
+
 -- SCENE ELEMENTS CREATING
 
 local function addPauseBackground(sceneView)
@@ -64,6 +65,7 @@ function scene:show(event)
   local sceneView = self.view
   
   if (event.phase == "will") then
+    event.parent:pauseGame()
     sceneView.playButton.taped = false
     sceneView.menuButton.taped = false
   elseif (event.phase == "did") then

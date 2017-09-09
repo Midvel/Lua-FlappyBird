@@ -12,6 +12,8 @@ LOGO_Y_SHIFT = 20
 LOGO_TIME_SHIFT = 500
 
 MAIN_LOGO_Y = display.contentHeight / 3 - LOGO_Y_SHIFT
+
+
 --GAME SCREEN
 
 --walls
@@ -29,6 +31,7 @@ BIRD_MAX_SPEED = 250
 
 --counter distant
 NUM_DISTANT = 6
+
 
 --PAUSE SCREEN
 

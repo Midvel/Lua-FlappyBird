@@ -12,6 +12,7 @@ local function onTapStartButton( event )
   end
 end
 
+
 -- SCENE ELEMENTS CREATING
 
 local function addMainScreenButtons(sceneView)
@@ -37,23 +38,20 @@ end
 local function locateMainScreenLogo(sceneView)
   local emptySpace = (display.contentWidth - sceneView.bird.width - sceneView.birdtext.width) / 5
   
-  sceneView.birdtext:locate( 2 * emptySpace, MAIN_LOGO_Y )
-  sceneView.bird:locate( display.contentWidth - 2 * emptySpace, MAIN_LOGO_Y )
+  sceneView.birdtext:locate( 2 * emptySpace, MAIN_LOGO_Y, 0 )
+  sceneView.bird:locate( display.contentWidth - 2 * emptySpace, MAIN_LOGO_Y, 1 )
 end
 
 local function addMainScreenLogo(sceneView)
   local birdtext = common:newImage( "textTexture", 3 )
   local bird = common:createBird()
   
-  birdtext.anchorX = 0
-  
-  bird.anchorX = 1
-  
   sceneView.birdtext = birdtext
   sceneView.bird = bird
   sceneView:insert(birdtext)
   sceneView:insert(bird)
 end
+
 
 -- SCENE LISTENERS
 
