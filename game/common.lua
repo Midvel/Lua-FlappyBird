@@ -151,6 +151,43 @@ end
 
 --background creating
 
+function common:addPanelTransition( panel )
+  --[[panel.a.moving = transition.to( panel.a, x = -panel.a.width * 0.5, 
+                              time = WALLS_TRANS_TIME, iterations = -1,
+                              onRepeat = function( obj )
+                                            obj.x = display.contentCenterX + obj.width
+                                         end })]]
+end
+
+function common:pausePanelTransition( panel )
+  if panel.a.moving then
+    transition.pause( panel.a.moving )
+  end
+  if panel.b.moving then
+    transition.pause( panel.b.moving )
+  end
+end
+
+function common:resumePanelTransition( panel )
+  if panel.a.moving then
+    transition.resume( panel.a.moving )
+  end
+  if panel.b.moving then
+    transition.resume( panel.b.moving )
+  end
+end
+
+function common:removePanelTransition( panel )
+  if panel.a.moving then
+    transition.cancel( panel.a.moving )
+    panel.a.moving = nil
+  end
+  if panel.b.moving then
+    transition.cancel( panel.b.moving )
+    panel.b.moving = nil
+  end
+end
+
 function common:createBackground( textureSet, num )
   local background = display.newImageRect(textures[textureSet], num, display.contentWidth, display.contentHeight)
   
@@ -166,12 +203,21 @@ function common:addBackgroundElements(sceneView)
   sceneView:insert(background)
   background:toBack()
   
-  local panel = self:newImage( "gameTexture", 2 )
-  panel:locate( PANEL_X, PANEL_Y, 0.5, 0 )
-  panel.spriteName = "panel"
+  local panel = {}
+  panel.a = self:newImage( "gameTexture", 2 )
+  panel.b = self:newImage( "gameTexture", 2 )
+  
+  panel.a:locate( PANEL_X, PANEL_Y, 0.5, 0 )
+  panel.b:locate( PANEL_X + panel.a.width, PANEL_Y, 0.5, 0 )
+  
+  panel.a.spriteName = "panel"
+  panel.b.spriteName = "panel"
+  
   sceneView.panel = panel
-  sceneView:insert(panel)
-  panel:toFront()
+  sceneView:insert(panel.a)
+  sceneView:insert(panel.b)
+  panel.a:toFront()
+  panel.b:toFront()
   
   local copyright = self:newImage( "textTexture", 4 )
   copyright:locate( COPY_X, COPY_Y, 0.5, 0 )

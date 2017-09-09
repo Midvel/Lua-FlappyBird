@@ -73,6 +73,7 @@ function scene:show(event)
   elseif (event.phase == "did") then
     sceneView.bird:setFrame(2)
     sceneView.bird:play()
+    common:addPanelTransition( sceneView.panel )
     common:addUpDownTransition( sceneView.birdtext )
     common:addUpDownTransition( sceneView.bird )
   end
@@ -85,6 +86,7 @@ function scene:hide(event)
     sceneView.bird:pause()
     common:removeUpDownTransition( sceneView.birdtext )
     common:removeUpDownTransition( sceneView.bird )
+    common:removePanelTransition( sceneView.panel )
   end
 end
 

@@ -35,7 +35,7 @@ end
 
 local function startPhysics(sceneView)
   --physics.setDrawMode( "hybrid" )
-  physics.addBody(sceneView.panel, "static", {bounce = 0})
+  physics.addBody(sceneView.panel.a, "static", {bounce = 0})
   physics.addBody(sceneView.fakeTop, "static", {bounce = 0})
   physics.addBody(sceneView.wallsA.top, "static", {bounce = 0})
   physics.addBody(sceneView.wallsB.top, "static", {bounce = 0})
@@ -198,7 +198,7 @@ local function addGameScreenTextElements(sceneView)
 end
 
 
--- START / PAUSE / RESUME / END / GAME
+-- START / PAUSE / RESUME / END GAME
 
 function scene:startGame()
   local sceneView = self.view
@@ -218,6 +218,7 @@ function scene:pauseGame()
   sceneView.pauseButton.taped = true
   sceneView.bird:pause()
   common:pauseUpDownTransition( sceneView.bird )
+  common:pausePanelTransition( sceneView.panel )
   if (not sceneView.firstTap) then
     transition.pause("wall")
     timer.pause(sceneView.wallsA.timer)
@@ -233,6 +234,7 @@ function scene:resumeGame()
   sceneView.pauseButton.taped = false
   sceneView.bird:play()
   common:resumeUpDownTransition( sceneView.bird )
+  common:resumePanelTransition( sceneView.panel )
   if (not sceneView.firstTap) then
     transition.resume("wall")
     timer.resume(sceneView.wallsA.timer)
@@ -288,6 +290,7 @@ function scene:show(event)
     sceneView.bird:setFrame(2)
     sceneView.bird:play()
     common:addUpDownTransition( sceneView.bird )
+    common:addPanelTransition( sceneView.panel )
     Runtime:addEventListener("touch", onTapScene)
     physics.start()
     physics.setGravity( 0, G_GRAVITY )
@@ -300,6 +303,7 @@ function scene:hide(event)
     Runtime:removeEventListener("touch", onTapScene)
   elseif ( event.phase == "did" ) then
     sceneView.bird:pause()
+    common:removePanelTransition( sceneView.panel )
     common:removeUpDownTransition( sceneView.bird )
     transition.cancel("wall")
     physics.stop()
