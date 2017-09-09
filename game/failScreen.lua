@@ -3,6 +3,8 @@ local common = require("game.common")
 require("game.consts")
 local scene = composer.newScene()
 
+-- SCENE COMMON LOGIC
+
 local function onTapStartButton( event )
   if not event.target.taped then
     event.target.taped = true
@@ -20,6 +22,8 @@ local function addFakeBackground(sceneView)
   sceneView:insert(back)
 end
 
+-- SCENE ELEMENTS CREATING
+
 local function addFailScreenText(sceneView)
   local failtext = common:newImage( "textTexture", 2 )
   
@@ -36,8 +40,6 @@ end
 local function addFailScreenBoard(sceneView)
   local board = common:newImage( "scoreBoardTexture", 1 )
   
-  board.anchorX = 0.5
-  board.anchorY = 0.5
   board.x = display.contentCenterX
   board.y = display.contentCenterY
   
@@ -71,43 +73,6 @@ local function addFailScreenButtons(sceneView)
   sceneView:insert(scoreButton)
 end
 
-local function setScreenCounter(sceneView, counter)
-  local first = counter % 10
-  local firstTmp = math.floor(counter/10)
-  local second = firstTmp % 10
-  local third = math.floor(firstTmp/10)
-  local XX = display.contentCenterX + 0.5 * sceneView.board.width - 3*sceneView.counterSprites[1].width
-  
-  sceneView.counterSprites.x = 0
-  sceneView.counterSprites.y = sceneView.board.y - 1.5 * sceneView.counterSprites[1].height
-  sceneView.counterSprites[1].x = XX
-  sceneView.counterSprites[1].y = 0
-  sceneView.counterSprites[1]:setFrame(1)
-  
-  sceneView.counterSprites[2].y = 0
-  sceneView.counterSprites[3].y = 0
-  sceneView.counterSprites[2].alpha = 0
-  sceneView.counterSprites[3].alpha = 0
-  
-  if third > 0 then
-    sceneView.counterSprites[3]:setFrame(third + 1)
-    sceneView.counterSprites[2]:setFrame(second + 1)
-    sceneView.counterSprites[1]:setFrame(first + 1)
-    sceneView.counterSprites[3].alpha = 1
-    sceneView.counterSprites[3].x = XX - 2*NUM_DISTANT - 2*scene.view.counterSprites[3].width
-    sceneView.counterSprites[2].x = XX - NUM_DISTANT - scene.view.counterSprites[3].width
---    sceneView.counterSprites[1].x = display.contentCenterX + 2*NUM_DISTANT + scene.view.counterSprites[1].width
-  elseif second > 0 then
-    sceneView.counterSprites[2].alpha = 1
-    sceneView.counterSprites[2]:setFrame(second + 1)
-    sceneView.counterSprites[1]:setFrame(first + 1)
-    sceneView.counterSprites[2].x = XX - NUM_DISTANT - scene.view.counterSprites[3].width
---    sceneView.counterSprites[1].x = display.contentCenterX + NUM_DISTANT + scene.view.counterSprites[1].width * 0.5
-  else
-    sceneView.counterSprites[1]:setFrame(first + 1)
-  end
-end
-
 -- SCENE LISTENERS
 
 function scene:create(event)
@@ -123,6 +88,8 @@ end
 function scene:show(event)
   local sceneView = self.view
   
+  local XX = display.contentCenterX + 0.5 * sceneView.board.width - 2.5*sceneView.counterSprites[1].width
+  
   if (event.phase == "will") then
     event.parent.view.pauseButton.alpha = 0
     event.parent.view.counterSprites.alpha = 0
@@ -130,7 +97,8 @@ function scene:show(event)
     sceneView.failtext.alpha = 0
     sceneView.back.alpha = 0
     sceneView.back:toFront()
-    setScreenCounter(sceneView, event.parent.view.counter)
+    sceneView.counterSprites:setCounter( event.parent.view.counterSprites.counter )
+    sceneView.counterSprites:locate( XX, display.contentCenterY - sceneView.counterSprites[1].height, 1 )
   elseif (event.phase == "did") then
     transition.fadeIn(sceneView.failtext, {y = sceneView.failtext.y + LOGO_Y_SHIFT, time = LOGO_TIME_SHIFT, 
                                           transition = easing.outSine})

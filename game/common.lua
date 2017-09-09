@@ -2,15 +2,19 @@ require("textures.textures")
 require("game.consts")
 local common = {}
 
-local function locate( self, x, y, xAnch, yAnch )
-  self.x = x
-  self.y = y
-  if xAnch ~= nil then self.anchorX = xAnch end
-  if yAnch ~= nil then self.anchorY = yAnch end
+--[[ COMMON IMAGES CREATION FUNCTIONS ]]--
+
+--new image wrapper
+
+local function locate( item, x, y, xAnch, yAnch )
+  item.x = x
+  if y ~= nil then item.y = y end
+  if xAnch ~= nil then item.anchorX = xAnch end
+  if yAnch ~= nil then item.anchorY = yAnch end
 end
 
 function common:newImage( textureSet, num )
-  local image = display.newImage(textures[textureSet], num)
+  local image = display.newImage( textures[textureSet], num )
   image.height = image.height * textures.SCALE_COEF_H
   image.width = image.width * textures.SCALE_COEF_W
   image.anchorX = 0.5
@@ -19,15 +23,21 @@ function common:newImage( textureSet, num )
   return image
 end
 
+--bird sprite creating
+
 function common:createBird()
   local bird = display.newSprite(textures.birdTexture, { name = "bird", frames = {2, 3, 2, 1}, loopCount = 0, time = 300})
   
   bird.xScale = textures.SCALE_COEF_H
   bird.yScale = textures.SCALE_COEF_W
+  bird.anchorX = 0.5
+  bird.anchorY = 0.5
   
   bird.locate = locate
   return bird
 end
+
+--walls creating
 
 function common:createWall( bTop, bBottom, wallWidth )
   local wall
@@ -39,7 +49,7 @@ function common:createWall( bTop, bBottom, wallWidth )
   if bTop then anchorY = 1 elseif bBottom then anchorY = 0 end
   if bTop or bBottom then spriteName = "wall" end
   
-  wall = common:newImage( "gameTexture", num )
+  wall = self:newImage( "gameTexture", num )
   
   wall.anchorY = anchorY
   wall.spriteName = spriteName
@@ -70,39 +80,77 @@ function common:createWallGroup( bTop, bBottom, wallWidth )
   return group  
 end
 
-function common:addGameScreenCounter(sceneView)
-  local counter = 0
-  local counterSprites = display.newGroup()
-  local first = display.newSprite( textures.numbersMiddleTexture, {name = "counter", start = 1, count = 10} )
-  local second = display.newSprite( textures.numbersMiddleTexture, {name = "counter", start = 1, count = 10} )
-  local third = display.newSprite( textures.numbersMiddleTexture, {name = "counter", start = 1, count = 10} )
+--Counter creating
 
+local function initNumber( number )
+  number:locate( 0, 0, 0, 0 )
+  number:setFrame(1)
+  number.alpha = 0
+end
+
+
+function common:createNumber( textureSet )
+  local number = display.newSprite( textures[textureSet], {name = "counter", start = 1, count = 10} ) 
+  number.xScale = textures.SCALE_COEF_H
+  number.yScale = textures.SCALE_COEF_W
+  number.locate = locate
+  number.init = initNumber
+  number:init()
+  return number
+end
+
+local function reinitCounter( counter, x, y, xAnch, yAnch )
+  counter.counter = 0
+  counter:locate( x, y, xAnch, yAnch )
+  counter[1]:init()
+  counter[2]:init()
+  counter[3]:init()
+  counter[1].alpha = 1
+end
+
+local function setCounter( counter, num )
+  counter.counter = num or counter.counter
+  local countString = tostring(counter.counter)
+  local i = 1
+  local k = 0
   
-  first.xScale = textures.SCALE_COEF_H
-  first.yScale = textures.SCALE_COEF_W
-  first.anchorX = 0.5
-  first.anchorY = 0
+  while tonumber(string.sub(countString, i, i)) ~= nil do
+    k = tonumber(string.sub(countString, i, i))
+    counter[i]:setFrame(k+1)
+    counter[i].alpha = 1
+    if i > 1 then 
+      counter[i].x = counter[i-1].x + NUM_DISTANT + counter[i].width
+    end
+    i = i + 1
+  end
+end
+
+
+function common:addGameScreenCounter(sceneView)
+  local counterSprites = display.newGroup()
+  local first = self:createNumber( "numbersMiddleTexture" )
+  local second = self:createNumber( "numbersMiddleTexture" )
+  local third = self:createNumber( "numbersMiddleTexture" )
   
-  second.xScale = textures.SCALE_COEF_H
-  second.yScale = textures.SCALE_COEF_W
-  second.anchorX = 0.5
-  second.anchorY = 0
-  
-  third.xScale = textures.SCALE_COEF_H
-  third.yScale = textures.SCALE_COEF_W
-  third.anchorX = 0.5
-  third.anchorY = 0
-  
-  sceneView.counter = counter
   counterSprites[1] = first
   counterSprites[2] = second
   counterSprites[3] = third
+  
+  counterSprites.anchorChildren = true
+  counterSprites.locate = locate
+  counterSprites.reinit = reinitCounter
+  counterSprites.setCounter = setCounter
+  
+  counterSprites.counter = 0
   sceneView.counterSprites = counterSprites
+  
   counterSprites:insert(first)
   counterSprites:insert(second)
   counterSprites:insert(third)
   sceneView:insert(counterSprites)
 end
+
+--background creating
 
 function common:addBackgroundElements(sceneView)
   local background = display.newImageRect(textures.gameTexture, 1, display.contentWidth, display.contentHeight)
@@ -112,32 +160,25 @@ function common:addBackgroundElements(sceneView)
   background:toBack()
   
   local panel = self:newImage( "gameTexture", 2 )
-  panel.anchorX = 0.5
-  panel.anchorY = 0
-  panel.x = display.contentCenterX
-  panel.y = display.contentHeight * 5 / 6
+  panel:locate( display.contentCenterX, display.contentHeight * 5 / 6, 0.5, 0 )
   panel.spriteName = "panel"
   sceneView.panel = panel
   sceneView:insert(panel)
   panel:toFront()
   
   local copyright = self:newImage( "textTexture", 4 )
-  copyright.anchorX = 0.5
-  copyright.anchorY = 0
-  copyright.x = display.contentCenterX
-  copyright.y = (display.contentHeight + panel.y) * 0.5
+  copyright:locate( display.contentCenterX, (display.contentHeight + panel.y) * 0.5, 0.5, 0 )
   sceneView:insert(copyright)
   copyright:toFront()
   
   local fakeTop = display.newImageRect(textures.gameTexture, 5, display.contentWidth, 20)
-  fakeTop.anchorX = 0.5
-  fakeTop.anchorY = 1
-  fakeTop.x = display.contentCenterX
-  fakeTop.y = 0
+  locate( fakeTop, display.contentCenterX, 0, 0.5, 1 )
   sceneView.fakeTop = fakeTop
   sceneView:insert(fakeTop)
 end
---BOUNCING TRANSITION
+
+--[[ BOUNCING TRANSITION ]]--
+
 function common:addUpDownTransition( obj )
   obj.down = transition.to( obj, { tag = "down", time = LOGO_TIME_SHIFT, y = obj.y + LOGO_Y_SHIFT, iterations = -1,
                   transition = easing.inOutSine, 
@@ -190,7 +231,9 @@ function common:resumeUpDownTransition( obj )
     transition.resume( obj.up )
   end
 end
-------------------------------------------------------
+
+--[[ COMMON BUTTON EFFECTS ]]--
+
 common.onTapButton = function ( event )
   if event.numTaps == 1 then
     transition.cancel( event.target )

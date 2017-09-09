@@ -34,19 +34,13 @@ local function addPauseScreenButtons(sceneView)
   local playButton = common:newImage( "UITexture", 6 )
   local menuButton = common:newImage( "UITexture", 3 )
   
-  playButton.anchorX = 0
-  playButton.anchorY = 0
-  playButton.x = playButton.width
-  playButton.y = playButton.height
-  
+  playButton:locate( playButton.width, playButton.height, 0, 0 )
+ 
   playButton.taped = false
   playButton:addEventListener( "tap", onTapPlayButton )
   
-  menuButton.anchorX = 0.5
-  menuButton.anchorY = 0.5
-  menuButton.x = display.contentCenterX
-  menuButton.y = display.contentCenterY
-  
+  menuButton:locate( display.contentCenterX, display.contentCenterY )
+ 
   menuButton.taped = false
   menuButton:addEventListener( "tap", onTapMenuButton )
   menuButton:addEventListener( "tap", common.onTapButton )

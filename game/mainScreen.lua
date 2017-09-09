@@ -46,10 +46,8 @@ local function addMainScreenLogo(sceneView)
   local bird = common:createBird()
   
   birdtext.anchorX = 0
-  birdtext.anchorY = 0.5
   
   bird.anchorX = 1
-  bird.anchorY = 0.5  
   
   sceneView.birdtext = birdtext
   sceneView.bird = bird

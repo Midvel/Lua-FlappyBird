@@ -11,32 +11,6 @@ local function birdEnterFrame(event)
   end
 end
 
-local function increaseCounter()
-  scene.view.counter = scene.view.counter + 1
-  local counter = scene.view.counter
-  local first = counter % 10
-  local firstTmp = math.floor(counter/10)
-  local second = firstTmp % 10
-  local third = math.floor(firstTmp/10)
-  
-  if third > 0 then
-    scene.view.counterSprites[3]:setFrame(third + 1)
-    scene.view.counterSprites[2]:setFrame(second + 1)
-    scene.view.counterSprites[1]:setFrame(first + 1)
-    scene.view.counterSprites[3].alpha = 1
-    scene.view.counterSprites[3].x = display.contentCenterX - 2*NUM_DISTANT - scene.view.counterSprites[3].width
-    scene.view.counterSprites[2].x = display.contentCenterX
-    scene.view.counterSprites[1].x = display.contentCenterX + 2*NUM_DISTANT + scene.view.counterSprites[1].width
-  elseif second > 0 then
-    scene.view.counterSprites[2].alpha = 1
-    scene.view.counterSprites[2]:setFrame(second + 1)
-    scene.view.counterSprites[1]:setFrame(first + 1)
-    scene.view.counterSprites[2].x = display.contentCenterX - NUM_DISTANT - scene.view.counterSprites[2].width * 0.5
-    scene.view.counterSprites[1].x = display.contentCenterX + NUM_DISTANT + scene.view.counterSprites[1].width * 0.5
-  else
-    scene.view.counterSprites[1]:setFrame(first + 1)
-  end
-end
 
 local function birdPanelCollision(event)
   if (event.phase == "began") then
@@ -46,7 +20,7 @@ local function birdPanelCollision(event)
       Runtime:removeEventListener( "enterFrame", birdEnterFrame )
       composer.showOverlay( "game.failScreen", { isModal = true } )
     elseif event.other.spriteName == "sensor" then
-      increaseCounter()
+      scene.view.counterSprites:setCounter( scene.view.counterSprites.counter + 1 )
     end
   end
 end
@@ -129,21 +103,7 @@ local function onTapPauseButton(event)
   end
 end
 
---LOCATING ELEMENTS
-local function locateGameScreenCounter(sceneView)
-  sceneView.counter = 0
-  sceneView.counterSprites.x = 0
-  sceneView.counterSprites.y = sceneView.pauseButton.y
-  sceneView.counterSprites[1].x = display.contentCenterX
-  sceneView.counterSprites[1].y = 0
-  sceneView.counterSprites[1]:setFrame(1)
-  
-  sceneView.counterSprites[2].y = 0
-  sceneView.counterSprites[3].y = 0
-  sceneView.counterSprites[2].alpha = 0
-  sceneView.counterSprites[3].alpha = 0
-  
-end
+-- SCENE ELEMENTS CREATING
 
 local function locateGameScreenWalls(sceneView)
   local wwidth = sceneView.wallsTop.wallWidth
@@ -153,33 +113,17 @@ local function locateGameScreenWalls(sceneView)
   local bY = math.random(delta, sceneView.panel.y - delta)
   local cY = math.random(delta, sceneView.panel.y - delta)
   
-  sceneView.wallsTop.a.x = XX
-  sceneView.wallsTop.a.y = aY - delta * 0.5
+  sceneView.wallsTop.a:locate( XX, aY - delta * 0.5 )
+  sceneView.wallsTop.b:locate( XX, bY - delta * 0.5 )
+  sceneView.wallsTop.c:locate( XX, cY - delta * 0.5 )
 
-  sceneView.wallsTop.b.x = XX
-  sceneView.wallsTop.b.y = bY - delta * 0.5
+  sceneView.wallsBottom.a:locate( XX, aY + delta * 0.5 )
+  sceneView.wallsBottom.b:locate( XX, bY + delta * 0.5 )
+  sceneView.wallsBottom.c:locate( XX, cY + delta * 0.5 )
   
-  sceneView.wallsTop.c.x = XX
-  sceneView.wallsTop.c.y = cY - delta * 0.5
-
-  sceneView.wallsBottom.a.x = XX
-  sceneView.wallsBottom.a.y = aY + delta * 0.5
-
-  sceneView.wallsBottom.b.x = XX
-  sceneView.wallsBottom.b.y = bY + delta * 0.5
-  
-  sceneView.wallsBottom.c.x = XX
-  sceneView.wallsBottom.c.y = cY + delta * 0.5
-  
-  sceneView.wallsFake.a.x = XX
-  sceneView.wallsFake.a.y = aY
-
-  sceneView.wallsFake.b.x = XX
-  sceneView.wallsFake.b.y = bY
-  
-  sceneView.wallsFake.c.x = XX
-  sceneView.wallsFake.c.y = cY
-
+  sceneView.wallsFake.a:locate( XX, aY )
+  sceneView.wallsFake.b:locate( XX, bY )
+  sceneView.wallsFake.c:locate( XX, cY )
 end
 
 local function addGameScreenWalls(sceneView)
@@ -206,18 +150,12 @@ local function addGameScreenWalls(sceneView)
 end
 
 local function locateGameScreenBird(sceneView)
-  sceneView.bird.x = BIRD_X_START
-  sceneView.bird.y = BIRD_Y_START - LOGO_Y_SHIFT
+  sceneView.bird:locate( BIRD_X_START, BIRD_Y_START - LOGO_Y_SHIFT )
   sceneView.bird.rotation = 0
 end
 
 local function addGameScreenBird(sceneView)
-  local bird = display.newSprite(textures.birdTexture, { name = "bird", frames = {2, 3, 2, 1}, loopCount = 0, time = 300})
-  
-  bird.xScale = textures.SCALE_COEF_H
-  bird.yScale = textures.SCALE_COEF_W
-  bird.anchorX = 0.5
-  bird.anchorY = 0.5
+  local bird = common:createBird()
   
   sceneView.bird = bird
   sceneView:insert(bird)
@@ -226,28 +164,21 @@ end
 local function addGameScreenButtons(sceneView)
   local pauseButton = common:newImage( "UITexture", 5 )
   
-  pauseButton.anchorX = 0
-  pauseButton.anchorY = 0
-  pauseButton.x = pauseButton.width
-  pauseButton.y = pauseButton.height
+  pauseButton:locate( pauseButton.width, pauseButton.height, 0, 0 )
   
   pauseButton.taped = false
   pauseButton.spriteName = "pause"
   pauseButton:addEventListener( "tap", onTapPauseButton )
-  
-  --pauseButton:addEventListener( "tap", common.onTapButton )
 
   sceneView.pauseButton = pauseButton
   sceneView:insert(pauseButton)
 end
 
 local function locateGameScreenTextElements(sceneView)
-  sceneView.help.x = display.contentCenterX
-  sceneView.help.y = display.contentCenterY
+  sceneView.help:locate( display.contentCenterX, display.contentCenterY )
   sceneView.help.alpha = 1
 
-  sceneView.text.x = display.contentCenterX
-  sceneView.text.y = display.contentHeight * 0.25
+  sceneView.text:locate( display.contentCenterX, display.contentHeight * 0.25 )
   sceneView.text.alpha = 1
 end
 
@@ -255,13 +186,6 @@ local function addGameScreenTextElements(sceneView)
   local help = common:newImage( "textTexture", 5 )
   local text = common:newImage( "textTexture", 1)
   
-  help.anchorX = 0.5
-  help.anchorY = 0.5
-
-  
-  text.anchorX = 0.5
-  text.anchorY = 0.5
-
   sceneView.help = help
   sceneView.text = text
   sceneView:insert(help)
@@ -321,7 +245,7 @@ function scene:show(event)
     locateGameScreenTextElements(sceneView)
     locateGameScreenWalls(sceneView)
     locateGameScreenBird(sceneView)
-    locateGameScreenCounter(sceneView)
+    sceneView.counterSprites:reinit( display.contentCenterX, sceneView.pauseButton.y, 0.5, 0 )
     
     sceneView.firstTap = true
     sceneView.pauseButton.taped = false
