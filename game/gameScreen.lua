@@ -29,15 +29,15 @@ local function startPhysics(sceneView)
   --physics.setDrawMode( "hybrid" )
   physics.addBody(sceneView.panel, "static", {bounce = 0})
   physics.addBody(sceneView.fakeTop, "static", {bounce = 0})
-  physics.addBody(sceneView.wallsTop.a, "static", {bounce = 0})
-  physics.addBody(sceneView.wallsTop.b, "static", {bounce = 0})
-  physics.addBody(sceneView.wallsTop.c, "static", {bounce = 0})
-  physics.addBody(sceneView.wallsBottom.a, "static", {bounce = 0})
-  physics.addBody(sceneView.wallsBottom.b, "static", {bounce = 0})
-  physics.addBody(sceneView.wallsBottom.c, "static", {bounce = 0})
-  physics.addBody(sceneView.wallsFake.a, "static", {isSensor=true})
-  physics.addBody(sceneView.wallsFake.b, "static", {isSensor=true})
-  physics.addBody(sceneView.wallsFake.c, "static", {isSensor=true})
+  physics.addBody(sceneView.wallsA.top, "static", {bounce = 0})
+  physics.addBody(sceneView.wallsB.top, "static", {bounce = 0})
+  physics.addBody(sceneView.wallsC.top, "static", {bounce = 0})
+  physics.addBody(sceneView.wallsA.bottom, "static", {bounce = 0})
+  physics.addBody(sceneView.wallsB.bottom, "static", {bounce = 0})
+  physics.addBody(sceneView.wallsC.bottom, "static", {bounce = 0})
+  physics.addBody(sceneView.wallsA.fake, "static", {isSensor=true})
+  physics.addBody(sceneView.wallsB.fake, "static", {isSensor=true})
+  physics.addBody(sceneView.wallsC.fake, "static", {isSensor=true})
   physics.addBody(sceneView.bird, "dynamic", { density = 2, bounce = 0})
   sceneView.bird:addEventListener( "collision", birdPanelCollision )
   Runtime:addEventListener( "enterFrame", birdEnterFrame )
@@ -52,43 +52,36 @@ local function inPauseButtonCoords( pauseButton, x, y )
   return x >= px and x <= px + w and y >= py and y <= py + h 
 end
 
-local function wallsTransition(walls)
+local function wallsTransition(walls, transDelay)
   local wwidth = walls.wallWidth
   local delta = walls.delta
-  local XX = display.contentWidth + wwidth * 0.5
-  transition.to( walls.a, { tag = "wall", x = -wwidth - delta, time = WALLS_TRANS_TIME, 
-                            iterations = -1,
-                             onRepeat = 
-                             function (wall) 
-                               wall.x = XX 
-                             end })
-  transition.to( walls.b, { tag = "wall", delay = WALLS_TRANS_TIME / 3, x = -wwidth - delta, 
-                            time = WALLS_TRANS_TIME, iterations = -1,
-                             onRepeat = 
-                             function (wall)
-                               wall.x = XX 
-                             end })
-  transition.to( walls.c, { tag = "wall", delay = 2*WALLS_TRANS_TIME / 3, x = -wwidth - delta, 
-                            time = WALLS_TRANS_TIME, iterations = -1,
-                             onRepeat = 
-                             function (wall) 
-                               wall.x = XX 
-                             end })
-
+  local delay = transDelay or 0
+  local wallStartX = display.contentWidth + wwidth * 0.5
+  local wallStartY = display.contentCenterY 
+  
+  transition.to( walls.top, { tag = "wall", delay = delay, x = -wwidth - delta, 
+                              time = WALLS_TRANS_TIME, iterations = -1,
+                              onRepeat = function (wall)
+                                            wallStartY = math.random(delta, PANEL_Y - delta)
+                                            wall.x = wallStartX 
+                                            wall.y = wallStartY - delta * 0.5  
+                                         end })
+  transition.to( walls.fake, { tag = "wall", delay = delay, x = -wwidth - delta, 
+                               time = WALLS_TRANS_TIME, iterations = -1,
+                               onRepeat = function (wall) wall.x = wallStartX; wall.y = wallStartY end })
+  transition.to( walls.bottom, { tag = "wall", delay = delay, x = -wwidth - delta, 
+                                 time = WALLS_TRANS_TIME, iterations = -1,
+                                 onRepeat = function (wall) 
+                                                wall.x = wallStartX; 
+                                                wall.y = wallStartY + delta * 0.5
+                                            end })
 end
-
 
 local function onTapScene( event )
   if event.phase == "began" and not inPauseButtonCoords( scene.view.pauseButton, event.x, event.y )  then
     if scene.view.firstTap then
       scene.view.firstTap = false
-      transition.fadeOut( scene.view.text, { time = 300 } )
-      transition.fadeOut( scene.view.help, { time = 300 } )
-      common:removeUpDownTransition(scene.view.bird)
-      wallsTransition(scene.view.wallsTop)
-      wallsTransition(scene.view.wallsBottom)
-      wallsTransition(scene.view.wallsFake)
-      startPhysics(scene.view)
+      scene:startGame()
     end
     scene.view.bird:setLinearVelocity( 0, V_BIRD_VELOCITY )
   end
@@ -105,47 +98,47 @@ end
 -- SCENE ELEMENTS CREATING
 
 local function locateGameScreenWalls(sceneView)
-  local wwidth = sceneView.wallsTop.wallWidth
-  local delta = sceneView.wallsTop.delta
-  local XX = display.contentWidth + wwidth * 0.5
-  local aY = math.random(delta, sceneView.panel.y - delta) 
-  local bY = math.random(delta, sceneView.panel.y - delta)
-  local cY = math.random(delta, sceneView.panel.y - delta)
+  local wwidth = sceneView.wallsA.wallWidth
+  local delta = sceneView.wallsA.delta
+  local wallStartX = display.contentWidth + wwidth * 0.5
+  local aY = math.random(delta, PANEL_Y - delta) 
+  local bY = math.random(delta, PANEL_Y - delta)
+  local cY = math.random(delta, PANEL_Y - delta)
   
-  sceneView.wallsTop.a:locate( XX, aY - delta * 0.5 )
-  sceneView.wallsTop.b:locate( XX, bY - delta * 0.5 )
-  sceneView.wallsTop.c:locate( XX, cY - delta * 0.5 )
+  sceneView.wallsA.top:locate( wallStartX, aY - delta * 0.5 )
+  sceneView.wallsB.top:locate( wallStartX, bY - delta * 0.5 )
+  sceneView.wallsC.top:locate( wallStartX, cY - delta * 0.5 )
 
-  sceneView.wallsBottom.a:locate( XX, aY + delta * 0.5 )
-  sceneView.wallsBottom.b:locate( XX, bY + delta * 0.5 )
-  sceneView.wallsBottom.c:locate( XX, cY + delta * 0.5 )
+  sceneView.wallsA.bottom:locate( wallStartX, aY + delta * 0.5 )
+  sceneView.wallsB.bottom:locate( wallStartX, bY + delta * 0.5 )
+  sceneView.wallsC.bottom:locate( wallStartX, cY + delta * 0.5 )
   
-  sceneView.wallsFake.a:locate( XX, aY )
-  sceneView.wallsFake.b:locate( XX, bY )
-  sceneView.wallsFake.c:locate( XX, cY )
+  sceneView.wallsA.fake:locate( wallStartX, aY )
+  sceneView.wallsB.fake:locate( wallStartX, bY )
+  sceneView.wallsC.fake:locate( wallStartX, cY )
 end
 
 local function addGameScreenWalls(sceneView)
-  local wallsTop = {}
-  local wallsBottom = {}
-  local wallsFake = {}
+  local wallsA = {}
+  local wallsB = {}
+  local wallsC = {}
  
-  wallsTop = common:createWallGroup( true, false )
-  wallsBottom = common:createWallGroup( false, true )
-  wallsFake = common:createWallGroup( false, false, wallsTop.wallWidth )
+  wallsA = common:createWallGroup()
+  wallsB = common:createWallGroup()
+  wallsC = common:createWallGroup()
  
-  sceneView.wallsTop = wallsTop
-  sceneView.wallsBottom = wallsBottom
-  sceneView.wallsFake = wallsFake
-  sceneView:insert(wallsTop.a)
-  sceneView:insert(wallsTop.b)
-  sceneView:insert(wallsTop.c)
-  sceneView:insert(wallsBottom.a)
-  sceneView:insert(wallsBottom.b)
-  sceneView:insert(wallsBottom.c)
-  sceneView:insert(wallsFake.a)
-  sceneView:insert(wallsFake.b)
-  sceneView:insert(wallsFake.c)  
+  sceneView.wallsA = wallsA
+  sceneView.wallsB = wallsB
+  sceneView.wallsC = wallsC
+  sceneView:insert(wallsA.top)
+  sceneView:insert(wallsA.fake)
+  sceneView:insert(wallsA.bottom)
+  sceneView:insert(wallsB.top)
+  sceneView:insert(wallsB.fake)
+  sceneView:insert(wallsB.bottom)
+  sceneView:insert(wallsC.top)
+  sceneView:insert(wallsC.fake)
+  sceneView:insert(wallsC.bottom)  
 end
 
 local function locateGameScreenBird(sceneView)
@@ -192,7 +185,19 @@ local function addGameScreenTextElements(sceneView)
 end
 
 
--- PAUSE / RESUME GAME
+-- START / PAUSE / RESUME GAME
+
+function scene:startGame()
+  local sceneView = self.view
+  
+  transition.fadeOut( sceneView.text, { time = 300 } )
+  transition.fadeOut( sceneView.help, { time = 300 } )
+  common:removeUpDownTransition(sceneView.bird)
+  wallsTransition(sceneView.wallsA)
+  wallsTransition(sceneView.wallsB, WALLS_B_TRANS_TIME)
+  wallsTransition(sceneView.wallsC, WALLS_C_TRANS_TIME)
+  startPhysics(sceneView)
+end
 
 function scene:pauseGame()
   local sceneView = self.view

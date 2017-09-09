@@ -64,18 +64,14 @@ function common:createWall( bTop, bBottom, wallWidth )
   return wall
 end
 
-function common:createWallGroup( bTop, bBottom, wallWidth )
+function common:createWallGroup()
   local group = {}
     
-  group.a = self:createWall( bTop, bBottom, wallWidth )
-  group.b = self:createWall( bTop, bBottom, wallWidth )
-  group.c = self:createWall( bTop, bBottom, wallWidth )
+  group.top = self:createWall( true, false )
+  group.fake = self:createWall( false, false, group.top.width )
+  group.bottom = self:createWall( false, true )
   
-  if not wallWidth then
-    group.wallWidth = group.a.width
-  else
-    group.wallWidth = wallWidth
-  end
+  group.wallWidth = group.top.width
   group.delta = ( display.contentWidth - 1.5 * group.wallWidth ) * 0.5
   
   return group  
@@ -171,14 +167,14 @@ function common:addBackgroundElements(sceneView)
   background:toBack()
   
   local panel = self:newImage( "gameTexture", 2 )
-  panel:locate( display.contentCenterX, display.contentHeight * 5 / 6, 0.5, 0 )
+  panel:locate( PANEL_X, PANEL_Y, 0.5, 0 )
   panel.spriteName = "panel"
   sceneView.panel = panel
   sceneView:insert(panel)
   panel:toFront()
   
   local copyright = self:newImage( "textTexture", 4 )
-  copyright:locate( display.contentCenterX, (display.contentHeight + panel.y) * 0.5, 0.5, 0 )
+  copyright:locate( COPY_X, COPY_Y, 0.5, 0 )
   sceneView:insert(copyright)
   copyright:toFront()
   

@@ -18,6 +18,8 @@ MAIN_LOGO_Y = display.contentHeight / 3 - LOGO_Y_SHIFT
 
 --walls
 WALLS_TRANS_TIME = 4500
+WALLS_B_TRANS_TIME = 1500 --(1/3 of total transition time)
+WALLS_C_TRANS_TIME = 3000 --(2/3 of total transition time)
 
 --bird position
 BIRD_X_START = 2*display.contentWidth / 7
@@ -36,3 +38,14 @@ NUM_DISTANT = 6
 --PAUSE SCREEN
 
 PAUSE_BACK_ALPHA = 0.6
+
+
+-- COMMON
+
+--panel
+PANEL_X = display.contentCenterX
+PANEL_Y = display.contentHeight * 5 / 6
+
+--copyright
+COPY_X = display.contentCenterX
+COPY_Y = (display.contentHeight + PANEL_Y) * 0.5
