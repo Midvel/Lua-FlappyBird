@@ -9,6 +9,17 @@ local function birdEnterFrame(event)
   if ( vy >= BIRD_MAX_SPEED ) then
     scene.view.bird:setLinearVelocity(0, BIRD_MAX_SPEED)
   end
+  if ( vy > 0 ) then
+    scene.view.bird.angularVelocity = V_BIRD_DOWN_ANGLE
+  end
+  if ( scene.view.bird.rotation < BIRD_UP_ANGLE ) then
+    scene.view.bird.rotation = BIRD_UP_ANGLE
+    scene.view.bird.angularVelocity = 0
+  end
+  if ( scene.view.bird.rotation > BIRD_DOWN_ANGLE ) then
+    scene.view.bird.rotation = BIRD_DOWN_ANGLE
+    scene.view.bird.angularVelocity = 0
+  end
 end
 
 local function birdPanelCollision(event)
@@ -85,6 +96,7 @@ local function onTapScene( event )
       scene:startGame()
     end
     scene.view.bird:setLinearVelocity( 0, V_BIRD_VELOCITY )
+    scene.view.bird.angularVelocity = V_BIRD_UP_ANGLE
   end
 end
 
