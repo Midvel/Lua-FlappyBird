@@ -11,13 +11,10 @@ local function birdEnterFrame(event)
   end
 end
 
-
 local function birdPanelCollision(event)
   if (event.phase == "began") then
     if (event.other.spriteName == "panel" or event.other.spriteName == "wall") then
-      scene:pauseGame()
-      event.target:removeEventListener( "collision", birdPanelCollision )
-      Runtime:removeEventListener( "enterFrame", birdEnterFrame )
+      scene:endGame()
       composer.showOverlay( "game.failScreen", { isModal = true } )
     elseif event.other.spriteName == "sensor" then
       scene.view.counterSprites:setCounter( scene.view.counterSprites.counter + 1 )
@@ -38,7 +35,7 @@ local function startPhysics(sceneView)
   physics.addBody(sceneView.wallsA.fake, "static", {isSensor=true})
   physics.addBody(sceneView.wallsB.fake, "static", {isSensor=true})
   physics.addBody(sceneView.wallsC.fake, "static", {isSensor=true})
-  physics.addBody(sceneView.bird, "dynamic", { density = 2, bounce = 0})
+  physics.addBody(sceneView.bird, "dynamic", { radius = sceneView.bird.contentHeight * 0.5, density = 2, bounce = 0})
   sceneView.bird:addEventListener( "collision", birdPanelCollision )
   Runtime:addEventListener( "enterFrame", birdEnterFrame )
 end
@@ -185,7 +182,7 @@ local function addGameScreenTextElements(sceneView)
 end
 
 
--- START / PAUSE / RESUME GAME
+-- START / PAUSE / RESUME / END / GAME
 
 function scene:startGame()
   local sceneView = self.view
@@ -227,6 +224,11 @@ function scene:resumeGame(exit)
   physics.start()
 end
 
+function scene:endGame()
+  self:pauseGame()
+  self.view.bird:removeEventListener( "collision", birdPanelCollision )
+  Runtime:removeEventListener( "enterFrame", birdEnterFrame )
+end
 
 -- SCENE LISTENERS
 
