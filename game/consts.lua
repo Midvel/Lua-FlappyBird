@@ -18,8 +18,8 @@ MAIN_LOGO_Y = display.contentHeight / 3 - LOGO_Y_SHIFT
 
 --walls
 WALLS_TRANS_TIME = 4500
-WALLS_B_TRANS_TIME = 1500 --(1/3 of total transition time)
-WALLS_C_TRANS_TIME = 3000 --(2/3 of total transition time)
+WALLS_B_DELAY = 1500 --(1/3 of total transition time)
+WALLS_C_DELAY = 3000 --(2/3 of total transition time)
 
 --bird position
 BIRD_X_START = 2*display.contentWidth / 7

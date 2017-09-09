@@ -76,7 +76,11 @@ end
 function scene:hide(event)
   local sceneView = self.view
   if ( event.phase == "will" ) then
-    event.parent:resumeGame(sceneView.menuButton.taped)
+    if sceneView.menuButton.taped then
+      event.parent:endGame()
+    else
+      event.parent:resumeGame()
+    end
   end
 end
 

@@ -49,17 +49,21 @@ local function inPauseButtonCoords( pauseButton, x, y )
   return x >= px and x <= px + w and y >= py and y <= py + h 
 end
 
-local function wallsTransition(walls, transDelay)
+local function wallsTransition(walls, delay)
   local wwidth = walls.wallWidth
   local delta = walls.delta
-  local delay = transDelay or 0
   local wallStartX = display.contentWidth + wwidth * 0.5
   local wallStartY = display.contentCenterY 
+  
+  walls.timer = timer.performWithDelay( WALLS_TRANS_TIME + delay, 
+                                        function(event)
+                                          wallStartY = math.random(delta, PANEL_Y - delta)
+                                        end,
+                                        -1 )
   
   transition.to( walls.top, { tag = "wall", delay = delay, x = -wwidth - delta, 
                               time = WALLS_TRANS_TIME, iterations = -1,
                               onRepeat = function (wall)
-                                            wallStartY = math.random(delta, PANEL_Y - delta)
                                             wall.x = wallStartX 
                                             wall.y = wallStartY - delta * 0.5  
                                          end })
@@ -190,9 +194,9 @@ function scene:startGame()
   transition.fadeOut( sceneView.text, { time = 300 } )
   transition.fadeOut( sceneView.help, { time = 300 } )
   common:removeUpDownTransition(sceneView.bird)
-  wallsTransition(sceneView.wallsA)
-  wallsTransition(sceneView.wallsB, WALLS_B_TRANS_TIME)
-  wallsTransition(sceneView.wallsC, WALLS_C_TRANS_TIME)
+  wallsTransition(sceneView.wallsA, 0 )
+  wallsTransition(sceneView.wallsB, WALLS_B_DELAY)
+  wallsTransition(sceneView.wallsC, WALLS_C_DELAY)
   startPhysics(sceneView)
 end
 
@@ -204,11 +208,14 @@ function scene:pauseGame()
   common:pauseUpDownTransition( sceneView.bird )
   if (not sceneView.firstTap) then
     transition.pause("wall")
+    timer.pause(sceneView.wallsA.timer)
+    timer.pause(sceneView.wallsB.timer)
+    timer.pause(sceneView.wallsC.timer)
   end
   physics.pause()
 end
 
-function scene:resumeGame(exit)
+function scene:resumeGame()
   local sceneView = self.view
   
   sceneView.pauseButton.taped = false
@@ -216,18 +223,24 @@ function scene:resumeGame(exit)
   common:resumeUpDownTransition( sceneView.bird )
   if (not sceneView.firstTap) then
     transition.resume("wall")
-  end
-  if (exit) then
-    sceneView.bird:removeEventListener("collision", birdPanelCollision)
-    Runtime:removeEventListener("enterFrame", birdEnterFrame)
+    timer.resume(sceneView.wallsA.timer)
+    timer.resume(sceneView.wallsB.timer)
+    timer.resume(sceneView.wallsC.timer)
   end
   physics.start()
 end
 
 function scene:endGame()
+  local sceneView = self.view
+  
   self:pauseGame()
-  self.view.bird:removeEventListener( "collision", birdPanelCollision )
-  Runtime:removeEventListener( "enterFrame", birdEnterFrame )
+  if ( not sceneView.firstTap ) then
+    timer.cancel(self.view.wallsA.timer)
+    timer.cancel(self.view.wallsB.timer)
+    timer.cancel(self.view.wallsC.timer)
+    self.view.bird:removeEventListener( "collision", birdPanelCollision )
+    Runtime:removeEventListener( "enterFrame", birdEnterFrame )
+  end
 end
 
 -- SCENE LISTENERS
