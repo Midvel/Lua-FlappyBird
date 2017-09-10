@@ -50,6 +50,11 @@ PAUSE_BACK_ALPHA = 0.6
 --counter time
 COUNTER_TIME = 1500
 
+-- medals
+BRONZE = 10
+SILVER = 25
+GOLD = 40
+
 -- COMMON
 
 --panel

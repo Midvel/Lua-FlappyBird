@@ -219,8 +219,49 @@ local scoreBoardTextureOptions =
       y = 516,
       width = 238,
       height = 126
+    },
+    {-- 2 new
+      x = 224,
+      y = 1002,
+      width = 32,
+      height = 14
+    },
+    {-- 3 bronze
+      x = 224,
+      y = 954,
+      width = 44,
+      height = 44
+    },
+    {-- 4 silver
+      x = 224,
+      y = 906,
+      width = 44,
+      height = 44
+    },
+    {-- 5 gold
+      x = 242,
+      y = 564,
+      width = 44,
+      height = 44
+    },
+    {-- 6 spark
+      x = 276,
+      y = 678,
+      width = 10,
+      height = 10
+    },
+    {-- 7 Spark
+      x = 276,
+      y = 734,
+      width = 10,
+      height = 10
+    },
+    {-- 8 SPARK
+      x = 276,
+      y = 786,
+      width = 10,
+      height = 10
     }
-    -- + medal
   }
 }
 
