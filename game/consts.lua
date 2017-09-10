@@ -51,9 +51,17 @@ PAUSE_BACK_ALPHA = 0.6
 COUNTER_TIME = 1200
 
 -- medals
-BRONZE = 10
-SILVER = 25
-GOLD = 40
+BRONZE = 1
+SILVER = 2
+GOLD = 3
+
+MEDAL_X = function(W) return display.contentCenterX - W end
+MEDAL_Y = display.contentCenterY
+
+--sparkle
+SPARKLE_TIME = 400
+SPARKLE_X_START = function(W) return display.contentCenterX - 1.5 * W end
+SPARKLE_Y_START = display.contentCenterY
 
 -- COMMON
 

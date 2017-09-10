@@ -23,6 +23,20 @@ function common:newImage( textureSet, num )
   return image
 end
 
+-- sparkle creating
+
+function common:createSparkle()
+  local sparkle = display.newSprite( textures.scoreBoardTexture, { name = "sparkle", frames = {6, 7, 8, 7, 6}, 
+                                                                   loopCount = 0, time = SPARKLE_TIME })
+  sparkle.xScale = textures.SCALE_COEF_H
+  sparkle.yScale = textures.SCALE_COEF_W
+  sparkle.anchorX = 0.5
+  sparkle.anchorY = 0.5
+  
+  sparkle.locate = locate
+  return sparkle
+end
+
 --bird sprite creating
 
 function common:createBird()

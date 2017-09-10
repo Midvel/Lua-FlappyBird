@@ -26,6 +26,14 @@ local function highscoreOnBoard( sceneView )
   return XX, YY
 end
 
+local function sparkleOnBoard( d )
+  local rand = math.random()
+  local delta = math.random( 0, d )
+  local XX = SPARKLE_X_START( d ) + math.cos( rand ) * delta * 0.5
+  local YY = SPARKLE_Y_START + math.sin( rand ) * delta * 0.5
+  return XX, YY
+end
+
 local function setMedal( sceneView, score )
   if score > GOLD then
     sceneView.gold.alpha = 1
@@ -34,6 +42,12 @@ local function setMedal( sceneView, score )
   elseif score > BRONZE then
     sceneView.bronze.alpha = 1
   end
+  if ( score > BRONZE ) then
+    sceneView.sparkle.alpha = 1
+    sceneView.sparkle:setFrame(3)
+    sceneView.sparkle:play()
+  end
+  
 end
 
 local function counterRecount( sceneView, score )
@@ -85,19 +99,31 @@ local function addFailScreenBoard(sceneView)
   sceneView:insert(new)
   
   local bronze = common:newImage( "scoreBoardTexture", 3 )
-  bronze:locate( display.contentCenterX - bronze.width, display.contentCenterY, 1 )
+  bronze:locate( MEDAL_X( bronze.width ), MEDAL_Y, 1 )
   sceneView.bronze = bronze
   sceneView:insert(bronze)
-  
+    
   local silver = common:newImage( "scoreBoardTexture", 4 )
-  silver:locate( display.contentCenterX - silver.width, display.contentCenterY, 1 )
+  silver:locate( MEDAL_X( silver.width ), MEDAL_Y, 1 )
   sceneView.silver = silver
   sceneView:insert(silver)
   
   local gold = common:newImage( "scoreBoardTexture", 5 )
-  gold:locate( display.contentCenterX - gold.width, display.contentCenterY, 1 )
+  gold:locate( MEDAL_X( gold.width ), MEDAL_Y, 1 )
   sceneView.gold = gold
   sceneView:insert(gold)
+  
+  local sparkle = common:createSparkle()
+  sparkle:locate( SPARKLE_X_START( bronze.width ), SPARKLE_Y_START )
+  sparkle.d = bronze.width
+  sparkle:addEventListener( "sprite", function(event)
+                                        if event.phase == "loop" then
+                                          local d = event.target.d
+                                          event.target:locate( sparkleOnBoard(d) )
+                                        end
+                                      end )
+  sceneView.sparkle = sparkle
+  sceneView:insert(sparkle)
 end
 
 local function addFailScreenButtons(sceneView)
@@ -145,6 +171,7 @@ function scene:prepare()
   sceneView.bronze.alpha = 0
   sceneView.silver.alpha = 0
   sceneView.gold.alpha = 0
+  sceneView.sparkle.alpha = 0
   
   sceneView.counterSprites:locate( countX, countY, 1 )
   sceneView.counterSprites:setCounter( 0 )
@@ -197,6 +224,7 @@ function scene:hide(event)
   elseif ( event.phase == "did" ) then
     event.parent.view.pauseButton.alpha = 1
     event.parent.view.counterSprites.alpha = 1
+    sceneView.sparkle:pause()
   end
 end
 
