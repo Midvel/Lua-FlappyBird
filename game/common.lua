@@ -113,20 +113,20 @@ local function setCounter( counter, num )
   local countString = tostring(counter.counter)
   local i = 1
   local k = 0
+  local l = #countString
   
-  while tonumber(string.sub(countString, i, i)) ~= nil do
+  for i = l, 1, -1 do
     k = tonumber(string.sub(countString, i, i))
-    counter[i]:setFrame(k+1)
-    counter[i].alpha = 1
-    if i > 1 then 
-      counter[i].x = counter[i-1].x + NUM_DISTANT + counter[i].width
+    counter[l-i+1]:setFrame(k+1)
+    counter[l-i+1].alpha = 1
+    if l-i+1 > 1 then 
+      counter[l-i+1].x = counter[l-i].x - NUM_DISTANT - counter[l-i+1].width
     end
-    i = i + 1
   end
 end
 
 
-function common:addGameScreenCounter(sceneView)
+function common:createScreenCounter()
   local counterSprites = display.newGroup()
   local first = self:createNumber( "numbersMiddleTexture" )
   local second = self:createNumber( "numbersMiddleTexture" )
@@ -142,12 +142,12 @@ function common:addGameScreenCounter(sceneView)
   counterSprites.setCounter = setCounter
   
   counterSprites.counter = 0
-  sceneView.counterSprites = counterSprites
   
   counterSprites:insert(first)
   counterSprites:insert(second)
   counterSprites:insert(third)
-  sceneView:insert(counterSprites)
+  
+  return counterSprites
 end
 
 

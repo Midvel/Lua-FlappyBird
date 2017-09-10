@@ -45,6 +45,11 @@ NUM_DISTANT = 6
 PAUSE_BACK_ALPHA = 0.6
 
 
+-- FAIL SCREEN
+
+--counter time
+COUNTER_TIME = 1500
+
 -- COMMON
 
 --panel

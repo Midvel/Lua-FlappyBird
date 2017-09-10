@@ -112,6 +112,11 @@ end
 
 
 -- SCENE ELEMENTS CREATING
+local function addGameScreenCounter(sceneView)
+  local counterSprites = common:createScreenCounter()
+  sceneView.counterSprites = counterSprites
+  sceneView:insert(counterSprites)
+end
 
 local function locateGameScreenWalls(sceneView)
   local wwidth = sceneView.wallsA.wallWidth
@@ -275,7 +280,7 @@ function scene:create(event)
   addGameScreenWalls(sceneView)
   addGameScreenBird(sceneView)
   addGameScreenButtons(sceneView)
-  common:addGameScreenCounter(sceneView)
+  addGameScreenCounter(sceneView)
   common:addBackgroundElements(sceneView)
 end
 
