@@ -95,6 +95,9 @@ local function onTapScene( event )
       scene.view.firstTap = false
       scene:startGame()
     end
+    scene.view.bird:setSequence( "flap" )
+    scene.view.bird:setFrame( 1 )
+    scene.view.bird:play()
     scene.view.bird:setLinearVelocity( 0, V_BIRD_VELOCITY )
     scene.view.bird.angularVelocity = V_BIRD_UP_ANGLE
   end
@@ -210,6 +213,7 @@ function scene:startGame()
   wallsTransition(sceneView.wallsB, WALLS_B_DELAY)
   wallsTransition(sceneView.wallsC, WALLS_C_DELAY)
   startPhysics(sceneView)
+  sceneView.bird:pause()
 end
 
 function scene:pauseGame()
@@ -232,7 +236,10 @@ function scene:resumeGame()
   local sceneView = self.view
   
   sceneView.pauseButton.taped = false
-  sceneView.bird:play()
+  if sceneView.bird.sequence == "bird" then 
+    sceneView.bird:setFrame(sceneView.bird.frame)
+    sceneView.bird:play()
+  end
   common:resumeUpDownTransition( sceneView.bird )
   common:resumePanelTransition( sceneView.panel )
   if (not sceneView.firstTap) then
@@ -288,6 +295,7 @@ function scene:show(event)
     
   elseif (event.phase == "did") then
     sceneView.bird:setFrame(2)
+    sceneView.bird:setSequence( "bird" )
     sceneView.bird:play()
     common:addUpDownTransition( sceneView.bird )
     common:addPanelTransition( sceneView.panel )

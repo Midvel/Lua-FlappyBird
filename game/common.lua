@@ -26,7 +26,9 @@ end
 --bird sprite creating
 
 function common:createBird()
-  local bird = display.newSprite(textures.birdTexture, { name = "bird", frames = {2, 3, 2, 1}, loopCount = 0, time = 300})
+  local bird = display.newSprite( textures.birdTexture, {
+                                  { name = "bird", frames = {2, 3, 2, 1}, loopCount = 0, time = 300},
+                                  { name = "flap", frames = {1, 2, 3, 2, 1}, loopCount = 1, time = 300} })
   
   bird.xScale = textures.SCALE_COEF_H
   bird.yScale = textures.SCALE_COEF_W

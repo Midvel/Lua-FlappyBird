@@ -72,6 +72,7 @@ function scene:show(event)
     sceneView.startButton.taped = false
   elseif (event.phase == "did") then
     sceneView.bird:setFrame(2)
+    sceneView.bird:setSequence("bird")
     sceneView.bird:play()
     common:addPanelTransition( sceneView.panel )
     common:addUpDownTransition( sceneView.birdtext )
