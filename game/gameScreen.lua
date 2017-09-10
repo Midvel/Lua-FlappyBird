@@ -29,6 +29,7 @@ local function birdPanelCollision(event)
       composer.showOverlay( "game.failScreen", { isModal = true } )
     elseif event.other.spriteName == "sensor" then
       scene.view.counterSprites:setCounter( scene.view.counterSprites.counter + 1 )
+      scene.view.counterSprites:locate( display.contentCenterX, scene.view.counterSprites.y, 0.5 )
     end
   end
 end
@@ -113,7 +114,7 @@ end
 
 -- SCENE ELEMENTS CREATING
 local function addGameScreenCounter(sceneView)
-  local counterSprites = common:createScreenCounter()
+  local counterSprites = common:createScreenCounter( "numbersLargeTexture" )
   sceneView.counterSprites = counterSprites
   sceneView:insert(counterSprites)
 end

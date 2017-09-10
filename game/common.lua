@@ -120,17 +120,17 @@ local function setCounter( counter, num )
     counter[l-i+1]:setFrame(k+1)
     counter[l-i+1].alpha = 1
     if l-i+1 > 1 then 
-      counter[l-i+1].x = counter[l-i].x - NUM_DISTANT - counter[l-i+1].width
+      counter[l-i+1].x = counter[l-i].x - NUM_DISTANT - counter[l-i].width
     end
   end
 end
 
 
-function common:createScreenCounter()
+function common:createScreenCounter( textureSet)
   local counterSprites = display.newGroup()
-  local first = self:createNumber( "numbersMiddleTexture" )
-  local second = self:createNumber( "numbersMiddleTexture" )
-  local third = self:createNumber( "numbersMiddleTexture" )
+  local first = self:createNumber( textureSet )
+  local second = self:createNumber( textureSet )
+  local third = self:createNumber( textureSet )
   
   counterSprites[1] = first
   counterSprites[2] = second

@@ -48,7 +48,7 @@ PAUSE_BACK_ALPHA = 0.6
 -- FAIL SCREEN
 
 --counter time
-COUNTER_TIME = 1500
+COUNTER_TIME = 1200
 
 -- medals
 BRONZE = 10

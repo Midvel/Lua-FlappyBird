@@ -63,6 +63,77 @@ local textTextureOptions =
   }
 }
 
+local numbersLargeTextureOptions = 
+{
+  frames = 
+  {
+    {--0
+      x = 992,
+      y = 120,
+      width = 24,
+      height = 36
+    },
+    {--1
+      x = 268,
+      y = 910,
+      width = 20,
+      height = 36,
+      sourceX = 4,
+      sourceY = 0,
+      sourceWidth = 24,
+      sourceHeight = 36
+    },
+    {--2
+      x = 584,
+      y = 320,
+      width = 24,
+      height = 36
+    },
+    {--3
+      x = 612,
+      y = 320,
+      width = 24,
+      height = 36
+    },
+    {--4
+      x = 640, 
+      y = 320, 
+      width = 24, 
+      height = 36
+    },
+    {--5
+      x = 668, 
+      y = 320, 
+      width = 24, 
+      height = 36
+    },
+    {--6
+      x = 584, 
+      y = 368, 
+      width = 24, 
+      height = 36
+    },
+    {--7
+      x = 612, 
+      y = 368, 
+      width = 24, 
+      height = 36
+    },
+    {--8
+      x = 640, 
+      y = 368, 
+      width = 24, 
+      height = 36
+    },
+    {--9
+      x = 668, 
+      y = 368, 
+      width = 24, 
+      height = 36
+    }
+  }
+}
+
 local numbersMiddleTextureOptions = 
 {
   frames = 
@@ -270,6 +341,7 @@ function textures:loadTexture()
   self.SCALE_COEF_W = display.contentWidth / 288
   self.birdTexture = graphics.newImageSheet(TEXTURE_PATH, birdTextureOptions)
   self.textTexture = graphics.newImageSheet(TEXTURE_PATH, textTextureOptions)
+  self.numbersLargeTexture = graphics.newImageSheet(TEXTURE_PATH, numbersLargeTextureOptions)
   self.numbersMiddleTexture = graphics.newImageSheet(TEXTURE_PATH, numbersMiddleTextureOptions)
   self.UITexture = graphics.newImageSheet(TEXTURE_PATH, UITextureOptions)
   self.gameTexture = graphics.newImageSheet(TEXTURE_PATH, gameTextureOptions)

@@ -120,11 +120,11 @@ local function addFailScreenButtons(sceneView)
 end
 
 local function addFailScreenCounters(sceneView)
-  local counterSprites = common:createScreenCounter()
+  local counterSprites = common:createScreenCounter( "numbersMiddleTexture" )
   sceneView.counterSprites = counterSprites
   sceneView:insert(counterSprites)
   
-  local Hscore = common:createScreenCounter()
+  local Hscore = common:createScreenCounter( "numbersMiddleTexture" )
   sceneView.Hscore = Hscore
   sceneView:insert(Hscore)
 end
