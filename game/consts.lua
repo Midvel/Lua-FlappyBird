@@ -51,9 +51,9 @@ PAUSE_BACK_ALPHA = 0.6
 COUNTER_TIME = 1200
 
 -- medals
-BRONZE = 1
-SILVER = 2
-GOLD = 3
+BRONZE = 10
+SILVER = 25
+GOLD = 40
 
 MEDAL_X = function(W) return display.contentCenterX - W end
 MEDAL_Y = display.contentCenterY
